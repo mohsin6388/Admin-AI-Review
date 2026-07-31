@@ -31,9 +31,9 @@ export default function Login() {
       <div className="w-full max-w-sm">
         <div className="flex items-center gap-2 justify-center mb-8">
           <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center font-bold text-white text-sm">
-            RB
+            RP
           </div>
-          <span className="font-semibold text-ink text-lg">Review Booster</span>
+          <span className="font-semibold text-ink text-lg">Review Ninja Pro</span>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">

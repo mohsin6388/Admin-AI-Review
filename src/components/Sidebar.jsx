@@ -25,10 +25,10 @@ export default function Sidebar({ open, onClose }) {
       >
         <div className="px-6 py-5 flex items-center gap-2 border-b border-white/10">
           <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center font-bold text-sm">
-            RB
+            RP
           </div>
           <div>
-            <p className="font-semibold leading-tight text-sm">Review Booster</p>
+            <p className="font-semibold leading-tight text-sm">Review Ninja Pro</p>
             <p className="text-[11px] text-white/50 leading-tight">Admin Panel</p>
           </div>
         </div>
