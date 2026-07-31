@@ -4,6 +4,21 @@ import StatCard from '../components/StatCard';
 import { LoadingState, ErrorState } from '../components/States';
 import { getDashboardStats, getAllUsers, getPaymentDetails } from '../api/client';
 
+// A user counts as "paid" if their plan isn't the free plan.
+// Using plan_name / plan_price directly from the users list because
+// it's per-user ground truth — more reliable than a separately
+// computed aggregate on the dashboard-stats endpoint.
+//
+// IMPORTANT: unverified users have plan_name/plan_price = null (no
+// subscription row exists for them yet). We must NOT count those as
+// paid — treat "no plan info at all" as free/unpaid explicitly.
+function isPaidUser(user) {
+  if (user.plan_name == null && user.plan_price == null) return false;
+  const planName = (user.plan_name || '').toLowerCase();
+  const planPrice = Number(user.plan_price) || 0;
+  return planName !== 'free' || planPrice > 0;
+}
+
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -29,20 +44,39 @@ export default function Dashboard() {
 
         const stats = statsRes.stats || {};
         const users = usersRes.users || [];
+        const counts = usersRes.counts || {};
+
         const totalBusinesses = users.reduce(
           (sum, u) => sum + (Number(u.total_businesses) || 0),
           0,
         );
+        const totalReviewsFromUsers = users.reduce(
+          (sum, u) => sum + (Number(u.total_reviews) || 0),
+          0,
+        );
 
-        const totalUsers = Number(stats.total_users || 0);
-        const paidUsers = Number(stats.paid_subscription_users || 0);
+        // Prefer the count coming from the users list itself
+        // (usersRes.counts.totalUsers / users.length) since it's
+        // computed from the same data we're displaying below.
+        const totalUsers =
+        Number(counts.verifiedUsers ?? counts.totalUsers ?? stats.total_users ?? 0);
+
+        // Verified vs non-verified signups (OTP not completed = non-verified).
+        const verifiedUsers = Number(counts.verifiedUsers ?? stats.verified_users ?? 0);
+        const nonVerifiedUsers = Number(
+          counts.nonVerifiedUsers ?? Math.max(totalUsers - verifiedUsers, 0),
+        );
+
+        const paidUsers = users.filter(isPaidUser).length;
         const freeUsers = Math.max(totalUsers - paidUsers, 0);
 
         setData({
           totalUsers,
+          verifiedUsers,
+          nonVerifiedUsers,
           paidUsers,
           freeUsers,
-          totalReviews: Number(stats.total_reviews_generated || 0),
+          totalReviews: Number(stats.total_reviews_generated || totalReviewsFromUsers || 0),
           totalBusinesses,
           monthlyRevenue: Number(stats.monthly_revenue || 0),
           totalRevenue: Number(paymentsRes.analytics?.totalRevenue || 0),
@@ -71,7 +105,11 @@ export default function Dashboard() {
         <div className="space-y-6">
           {/* Top row - core counts */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard label="Total Users" value={formatNumber(data.totalUsers)} />
+            <StatCard
+              label="Total Users"
+              value={formatNumber(data.totalUsers)}
+              sub={`${formatNumber(data.verifiedUsers)} verified`}
+            />
             <StatCard label="Businesses Generated" value={formatNumber(data.totalBusinesses)} />
             <StatCard label="Reviews Generated" value={formatNumber(data.totalReviews)} />
             <StatCard
@@ -81,8 +119,14 @@ export default function Dashboard() {
             />
           </div>
 
-          {/* Second row - free vs paid + revenue this month */}
+          {/* Second row - verification + free vs paid + revenue this month */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard
+              label="Non-Verified Users"
+              value={formatNumber(data.nonVerifiedUsers)}
+              tone="warning"
+              sub={`${percent(data.nonVerifiedUsers, data.totalUsers)}% of total users`}
+            />
             <StatCard
               label="Paid Users"
               value={formatNumber(data.paidUsers)}
@@ -98,6 +142,10 @@ export default function Dashboard() {
               label="This Month's Revenue"
               value={formatCurrency(data.monthlyRevenue)}
             />
+          </div>
+
+          {/* Third row - payment success/failed on its own since we freed up a slot */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard
               label="Payment Success / Failed"
               value={`${data.successPayments} / ${data.failedPayments}`}
