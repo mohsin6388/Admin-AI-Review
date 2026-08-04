@@ -2,7 +2,8 @@ import DashboardLayout from "../components/DashboardLayout";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_URL = 'https://api.reviewninjapro.com/api';
+const API_URL = 'https://api.reviewninjapro.com/api/message';
+// const API_URL = 'http://localhost:5000/api/message';
 
 // Backend allowed statuses: Open, In Progress, Resolved, Closed
 const STATUS_STYLES = {
