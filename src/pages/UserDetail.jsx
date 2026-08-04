@@ -119,7 +119,8 @@ export default function UserDetail() {
           {/* Usage totals */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <StatCard label="Total Businesses" value={user.total_businesses ?? 0} />
-            <StatCard label="Total Reviews Generated" value={user.total_reviews ?? 0} />
+            <StatCard label=
+            {`Total Reviews Generated out of ${user.plan_max_reviews}`} value={user.total_reviews ?? 0} />
             <StatCard label="Total Payments Made" value={userPayments.length} />
           </div>
 

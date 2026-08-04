@@ -1,6 +1,5 @@
-// Base URL of your existing Express backend.
-// Set VITE_API_BASE_URL in a .env file, e.g. VITE_API_BASE_URL=http://localhost:5000/api
-const BASE_URL = 'https://api.reviewninjapro.com/api';
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 function getToken() {
   return localStorage.getItem('admin_token');
