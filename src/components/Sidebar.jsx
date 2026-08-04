@@ -5,6 +5,7 @@ const links = [
   { to: '/users', label: 'Users', icon: UsersIcon },
   { to: '/payments', label: 'Payments', icon: PaymentIcon },
   { to: '/tickets', label: 'Tickets', icon: TicketIcon },
+  { to: '/add-business', label: 'Add Business', icon: TicketIcon },
 ];
 
 export default function Sidebar({ open, onClose }) {

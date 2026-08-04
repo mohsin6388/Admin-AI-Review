@@ -6,6 +6,7 @@ import UserDetail from './pages/UserDetail';
 import Payments from './pages/Payments';
 import ProtectedRoute from './components/ProtectedRoute';
 import Tickets from "./pages/Tickets";
+import AddBusiness from "./pages/AddBusiness";
 
 export default function App() {
   return (
@@ -53,6 +54,19 @@ export default function App() {
     </ProtectedRoute>
   }
 />
+
+     <Route
+    path="/add-business"
+    element={
+     <ProtectedRoute>
+       <AddBusiness />
+     </ProtectedRoute>
+    }
+  />
+
+
+
+
 
     </Routes>
   );
