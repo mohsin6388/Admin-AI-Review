@@ -1,12 +1,13 @@
-import { Routes, Route } from 'react-router-dom';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Users from './pages/Users';
-import UserDetail from './pages/UserDetail';
-import Payments from './pages/Payments';
-import ProtectedRoute from './components/ProtectedRoute';
+import { Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import Users from "./pages/Users";
+import UserDetail from "./pages/UserDetail";
+import Payments from "./pages/Payments";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Tickets from "./pages/Tickets";
 import AddBusiness from "./pages/AddBusiness";
+import AddDiscount from "./pages/AddDiscount";
 
 export default function App() {
   return (
@@ -45,29 +46,32 @@ export default function App() {
         }
       />
 
+      <Route
+        path="/tickets"
+        element={
+          <ProtectedRoute>
+            <Tickets />
+          </ProtectedRoute>
+        }
+      />
 
       <Route
-  path="/tickets"
-  element={
-    <ProtectedRoute>
-      <Tickets />
-    </ProtectedRoute>
-  }
-/>
+        path="/add-business"
+        element={
+          <ProtectedRoute>
+            <AddBusiness />
+          </ProtectedRoute>
+        }
+      />
 
-     <Route
-    path="/add-business"
-    element={
-     <ProtectedRoute>
-       <AddBusiness />
-     </ProtectedRoute>
-    }
-  />
-
-
-
-
-
+      <Route
+        path="/add-coupon"
+        element={
+          <ProtectedRoute>
+            <AddDiscount />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

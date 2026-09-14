@@ -1,8 +1,8 @@
-
-const BASE_URL = 'https://api.reviewninjapro.com/api';
+const BASE_URL = "https://api.reviewninjapro.com/api";
+// const BASE_URL = "http://localhost:5000/api";
 
 function getToken() {
-  return localStorage.getItem('admin_token');
+  return localStorage.getItem("admin_token");
 }
 
 async function request(path, options = {}) {
@@ -11,7 +11,7 @@ async function request(path, options = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
@@ -25,7 +25,8 @@ async function request(path, options = {}) {
   }
 
   if (!res.ok) {
-    const message = data?.message || data?.error || `Request failed (${res.status})`;
+    const message =
+      data?.message || data?.error || `Request failed (${res.status})`;
     throw new Error(message);
   }
 
@@ -38,25 +39,25 @@ async function request(path, options = {}) {
 // reliably with GET requests. This client calls it as POST — the backend
 // route method should be updated to router.post(...). See README for details.
 export function adminLogin(email, password) {
-  return request('/admin/auth/login', {
-    method: 'POST',
+  return request("/admin/auth/login", {
+    method: "POST",
     body: JSON.stringify({ email, password }),
   });
 }
 
 // ===================== DASHBOARD =====================
 export function getDashboardStats() {
-  return request('/admin/dashboard/stats');
+  return request("/admin/dashboard/stats");
 }
 
 // ===================== USERS =====================
 export function getAllUsers() {
-  return request('/admin/users');
+  return request("/admin/users");
 }
 
 // ===================== PAYMENTS =====================
 export function getPaymentDetails() {
-  return request('/admin/users/payment-details');
+  return request("/admin/users/payment-details");
 }
 
 export { getToken };
